@@ -1,0 +1,40 @@
+{
+	"name": "SalesDelimitedText",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "traininglakehouse",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FileExt": {
+				"type": "string",
+				"defaultValue": "csv"
+			},
+			"FileTime": {
+				"type": "string",
+				"defaultValue": "@pipeline().TriggerTime"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(dataset().FileTime,'.',dataset().FileExt)",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "sales/@{activity('Lookup Old Watermark').output.firstRow.table_name}/@{formatDateTime(utcnow(),'yyyy')}/@{formatDateTime(utcnow(),'MM')}/@{formatDateTime(utcnow(),'dd')}/@{formatDateTime(utcnow(),'HH')}",
+					"type": "Expression"
+				},
+				"fileSystem": "bronze"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

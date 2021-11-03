@@ -1,0 +1,38 @@
+{
+	"name": "TrackingJSON",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "websitetrackinglogs",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "ecommercelogs101"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"time": {
+					"type": "string"
+				},
+				"remote_ip": {
+					"type": "string"
+				},
+				"request": {
+					"type": "string"
+				},
+				"response": {
+					"type": "integer"
+				},
+				"agent": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

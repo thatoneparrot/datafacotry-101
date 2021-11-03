@@ -1,0 +1,9 @@
+{
+	"name": "trlakehouse101-df",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "afefb5b7-e0b6-41c1-b205-f826e703be20",
+		"tenantId": "2299e7ad-720c-47f7-804c-fd54b3ba65ca"
+	}
+}
