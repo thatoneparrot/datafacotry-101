@@ -1,0 +1,106 @@
+{
+	"name": "electroniz_curation_pipeline",
+	"properties": {
+		"description": "This pipeline will curate data for the sales database,\ncurrency conversion, geo-location, and ecommerce website\ntracking logs by fetching from the bronze layer and saving it\nin the silver layer.",
+		"activities": [
+			{
+				"name": "Get Secret",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://datafence101-kv.vault.azure.net/secrets/ADLSKEY/84761fff86df40f5957c78bf52e8bac1?api-version=7.0",
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Run Curation Notebook",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "Get Secret",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/blinco382@gmail.com/electroniz_curation_notebook",
+					"baseParameters": {
+						"STORAGE_ACCOUNT": "@pipeline().parameters.STORAGE_ACCOUNT",
+						"BRONZE_LAYER_NAMESPACE": "@pipeline().parameters.BRONZE_LAYER_NAMESPACE",
+						"SILVER_LAYER_NAMESPACE": "@pipeline().parameters.SILVER_LAYER_NAMESPACE",
+						"STORE_SALES_FOLDER": "@pipeline().parameters.STORE_SALES_FOLDER",
+						"ADLS_FOLDER": "@pipeline().parameters.ADLS_FOLDER",
+						"TABLE_LIST": "@pipeline().parameters.TABLE_LIST",
+						"CURRENCY_LIST": "@pipeline().parameters.CURRENCY_LIST",
+						"CURRENCY_FOLDER": "@pipeline().parameters.CURRENCY_FOLDER",
+						"GEOLOCATION_FOLDER": "@pipeline().parameters.GEOLOCATION_FOLDER",
+						"LOGS_FOLDER": "@pipeline().parameters.LOGS_FOLDER",
+						"ECOMM_FOLDER": "@pipeline().parameters.ECOMM_FOLDER",
+						"ADLS_KEY": "@activity('Get Secret').output.value"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "Curation Spark Cluster",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"STORAGE_ACCOUNT": {
+				"type": "string"
+			},
+			"BRONZE_LAYER_NAMESPACE": {
+				"type": "string"
+			},
+			"SILVER_LAYER_NAMESPACE": {
+				"type": "string"
+			},
+			"STORE_SALES_FOLDER": {
+				"type": "string"
+			},
+			"ADLS_FOLDER": {
+				"type": "string"
+			},
+			"TABLE_LIST": {
+				"type": "string"
+			},
+			"CURRENCY_LIST": {
+				"type": "string"
+			},
+			"CURRENCY_FOLDER": {
+				"type": "string"
+			},
+			"GEOLOCATION_FOLDER": {
+				"type": "string"
+			},
+			"LOGS_FOLDER": {
+				"type": "string"
+			},
+			"ECOMM_FOLDER": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}
